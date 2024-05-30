@@ -17,6 +17,9 @@
 
 /* Please keep these in alphabetical order!  */
 #include "intrman.h"
+#ifdef SUPPORT_CARD_FILESYSTEM
+#include "ioman.h"
+#endif
 #include "loadcore.h"
 #include "sio2man.h"
 #include "sifcmd.h"

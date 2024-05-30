@@ -9,7 +9,13 @@ clean:
 
 ifeq ($(DEBUG), 1)
   $(info -- SD2PSXMAN debug enabled)
-  IOP_CFLAGS += -DDEBUG
+  IOP_CFLAGS += -DDEBUG=1
+endif
+
+ifeq ($(SUPPORT_CARD_FILESYSTEM), 1)
+  $(info -- SD2PSXMAN filesystem enabled)
+  IOP_CFLAGS += -DSUPPORT_CARD_FILESYSTEM=1
+  IOP_OBJS += filesystem.o
 endif
 
 include $(PS2SDK)/Defs.make

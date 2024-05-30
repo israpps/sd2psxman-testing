@@ -8,6 +8,11 @@
 
 IRX_ID(MODNAME, MAJOR, MINOR);
 
+#ifdef SUPPORT_CARD_FILESYSTEM
+int register_filesystem_access(void);
+void remove_filesystem_declaration(void);
+#endif
+
 #define SD2PSXMAN_ID 0x8B
 #define SD2PSXMAN_RESERVED 0xFF
 #define SD2PSXMAN_REPLY_CONST 0xAA
@@ -477,16 +482,22 @@ int __start(int argc, char *argv[])
         DPRINTF("Hooked SecrSetMcCommandHandler (new one:0x%p, old one 0x%p)\n", HOOKED_SecrSetMcCommandHandler, ORIGINAL_SecrSetMcCommandHandler);
     }
 
+#ifdef SUPPORT_CARD_FILESYSTEM
+    if (!register_filesystem_access()) goto quit_stop_thread_and_restore_cmdhandler;
+#endif
+
     iop_library_t * lib_modload = ioplib_getByName("modload");
     if (lib_modload != NULL) {
         DPRINTF("modload 0x%x detected\n", lib_modload->version);
         if (lib_modload->version > 0x102) //IOP is running a MODLOAD version wich supports unloading IRX Modules
             return MODULE_REMOVABLE_END; // and we do support getting unloaded...
     } else {
-        DPRINTF("modload not detected!\n");
+        DPRINTF("modload not detected! this is serious!\n");
     }
 
     return MODULE_RESIDENT_END;
+    quit_stop_thread_and_restore_cmdhandler:
+    ioplib_hookExportEntry(SECRMAN, SecrSetMcCommandHandler_Expnum, ORIGINAL_SecrSetMcCommandHandler);
     quit_and_stop_thread:
     DeleteThread(RPCThreadID);
     quit:
@@ -501,5 +512,8 @@ int __stop(int argc, char *argv[])
     DPRINTF("Restoring SECRMAN callback setter\n");
     iop_library_t * SECRMAN = ioplib_getByName("secrman");
     ioplib_hookExportEntry(SECRMAN, SecrSetMcCommandHandler_Expnum, ORIGINAL_SecrSetMcCommandHandler);
+#ifdef SUPPORT_CARD_FILESYSTEM
+    remove_filesystem_declaration();
+#endif
     return MODULE_NO_RESIDENT_END;
 }

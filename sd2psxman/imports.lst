@@ -33,3 +33,10 @@ I_sceSifRegisterRpc
 I_sceSifRpcLoop
 I_sceSifGetOtherData
 sifcmd_IMPORTS_end
+
+#ifdef SUPPORT_CARD_FILESYSTEM
+ioman_IMPORTS_start
+I_AddDrv
+I_DelDrv
+ioman_IMPORTS_end
+#endif
