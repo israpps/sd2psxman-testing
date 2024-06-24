@@ -1,6 +1,8 @@
 #include "irx_imports.h"
 #include "module_debug.h"
-#include "errno.h"
+#include "../sd2psxman_common.h"
+#include "sd2psxman_internal.h"
+#include <errno.h>
 
 
 
@@ -26,6 +28,47 @@ int sd2psx_lseek(iop_file_t *F, int pos, int mode) {
     return 0;
 }
 
+int sd2psx_ioctl(iop_file_t *fd, int cmd, void *data) {
+	int ret;
+    switch(cmd)
+	{
+        case SD2PSXMAN_PING:
+            ret = sd2psxman_ping(data);
+            break;
+        case SD2PSXMAN_GET_STATUS:
+            ret = sd2psxman_get_status(data);
+            break;
+        case SD2PSXMAN_GET_CARD:
+            ret = sd2psxman_get_card(data);
+            break;
+        case SD2PSXMAN_SET_CARD:
+            ret = sd2psxman_set_card(data);
+            break;
+        case SD2PSXMAN_GET_CHANNEL:
+            ret = sd2psxman_get_channel(data);
+            break;
+        case SD2PSXMAN_SET_CHANNEL:
+            ret = sd2psxman_set_channel(data);
+            break;
+        //case SD2PSXMAN_GET_GAMEID: // this CMD sends payload back to EE. to implement such thing. IOMANX IOCTL is required
+        //    ret = sd2psxman_get_gameid(data);
+        //    break;
+        case SD2PSXMAN_SET_GAMEID:
+            ret = sd2psxman_set_gameid(data);
+            break;
+        case SD2PSXMAN_UNMOUNT_BOOTCARD:
+            ret = sd2psxman_unmount_bootcard(data);
+            break;
+        case SD2PSXMAN_SEND_RAW_PAYLOAD:
+            ret = sd2psxman_send_raw_payload(data);
+            break;
+        default:
+			ret = -EBADRQC; // invalid request code
+            printf(MODNAME": Unknown ioctl (%d) called!\n", cmd);
+    }
+    return ret;
+}
+
 #define NOT_SUPPORTED_OP (void*)&not_supported_operation
 static int not_supported_operation() {
     return -ENOTSUP;
@@ -41,7 +84,7 @@ static iop_device_ops_t ds2psx_fio_ops =
 	&sd2psx_read, //read
 	&sd2psx_write, //write
 	&sd2psx_lseek, //lseek
-	NOT_SUPPORTED_OP, //ioctl
+	&sd2psx_ioctl, //ioctl
 	NOT_SUPPORTED_OP, //remove
 	NOT_SUPPORTED_OP, //mkdir
 	NOT_SUPPORTED_OP, //rmdir

@@ -19,6 +19,7 @@ I_strlen
 I_strcpy
 sysclib_IMPORTS_end
 
+#ifdef RPC_SUPPORT
 thbase_IMPORTS_start
 I_CreateThread
 I_StartThread
@@ -33,6 +34,7 @@ I_sceSifRegisterRpc
 I_sceSifRpcLoop
 I_sceSifGetOtherData
 sifcmd_IMPORTS_end
+#endif
 
 #ifdef SUPPORT_CARD_FILESYSTEM
 ioman_IMPORTS_start
