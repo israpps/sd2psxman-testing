@@ -1,5 +1,5 @@
 IOP_BIN = irx/sd2psxman.irx
-
+IOP_SRC_DIR = src/
 IOP_OBJS = sd2psxman.o ioplib.o imports.o
 
 all: $(IOP_BIN)
