@@ -50,5 +50,5 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
-sd2psxman/irx/sd2psxman.irx
+sd2psxman/irx/*.irx
 .vscode/settings.json
