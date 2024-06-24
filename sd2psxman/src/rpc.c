@@ -67,9 +67,9 @@ static void threadRpcFunction(void *arg)
 {
 	(void)arg;
 	DPRINTF("RPC Thread Started\n");
-	SifSetRpcQueue( &sd2psxman_queue , GetThreadId() );
-	SifRegisterRpc( &sd2psxman_server, SD2PSXMAN_IRX, (void *)sd2psxman_rpc_handler,(u8 *)&sd2psxman_rpc_buffer,NULL,NULL, &sd2psxman_queue );
-	SifRpcLoop( &sd2psxman_queue );
+    sceSifSetRpcQueue( &sd2psxman_queue , GetThreadId() );
+	sceSifRegisterRpc( &sd2psxman_server, SD2PSXMAN_IRX, (void *)sd2psxman_rpc_handler,(u8 *)&sd2psxman_rpc_buffer,NULL,NULL, &sd2psxman_queue );
+	sceSifRpcLoop( &sd2psxman_queue );
 }
 
 int sd2psxman_CreateRPCService() {
